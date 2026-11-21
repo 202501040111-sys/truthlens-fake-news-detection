@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TruthLens | Fake News Screening</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="nav"><a class="brand" href="/">◉ TruthLens</a><div><a class="navlink active" href="/">Detector</a><a class="navlink" href="/training">Train Model</a></div></nav>
+<main class="container">
+<section class="hero"><div class="eyebrow">NLP · MACHINE LEARNING</div><h1>Pause. Check.<br><span>Think critically.</span></h1>
+<p>Paste a news article or headline to screen its text using a trained machine-learning model.</p>
+<div class="status-pill {% if ready %}ready{% else %}notready{% endif %}"><span class="dot"></span>{% if ready %}Model trained and ready{% else %}Model not trained yet{% endif %}</div></section>
+<section class="card detector">
+<div class="card-head"><div><h2>News text analysis</h2><p>Enter a headline or article excerpt (minimum 20 characters).</p></div><span class="badge">Text classifier</span></div>
+<form method="POST">
+<textarea name="news_text" placeholder="Paste news text here…" required>{{ news_text }}</textarea>
+<div class="form-bottom"><span id="count">0 characters</span><button class="button primary" type="submit">Analyze text <span>→</span></button></div>
+</form>
+{% if result %}
+<div class="result {% if result.label|lower == 'fake' %}fake{% else %}real{% endif %}">
+<div class="result-icon">{% if result.label|lower == 'fake' %}⚠{% else %}✓{% endif %}</div>
+<div><div class="result-label">Model prediction</div><h3>{{ result.label }} News</h3>
+{% if result.confidence is not none %}<p>Model confidence estimate: {{ "%.1f"|format(result.confidence) }}%</p>{% else %}<p>Confidence score is not available for this classifier.</p>{% endif %}
+</div>
+{% endif %}
+</section>
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="messages">{% for category, message in messages %}<div class="message {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+<section class="info-grid"><div class="info-card"><span>01</span><h3>Text preprocessing</h3><p>Normalises text and removes links and non-letter characters before feature extraction.</p></div><div class="info-card"><span>02</span><h3>TF-IDF features</h3><p>Converts text into numerical word and phrase features for the classifier.</p></div><div class="info-card"><span>03</span><h3>Prediction</h3><p>Classifies text as Fake or Real based on patterns learned from the labelled dataset.</p></div></section>
+{% if metrics %}<section class="card metrics"><div class="card-head"><div><h2>Model evaluation</h2><p>Holdout results from the latest training</p></div></div><div class="metric-row"><div class="metric"><small>Best model</small><strong>{{ metrics.best_model }}</strong></div><div class="metric"><small>Dataset rows</small><strong>{{ metrics.dataset_rows }}</strong></div><div class="metric"><small>Test samples</small><strong>{{ metrics.test_rows }}</strong></div></div><div class="table-wrap"><table><thead><tr><th>Algorithm</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1-score</th></tr></thead><tbody>{% for name, score in metrics.metrics.items() %}<tr><td>{{ name }}</td><td>{{ "%.1f"|format(score.accuracy*100) }}%</td><td>{{ "%.1f"|format(score.precision*100) }}%</td><td>{{ "%.1f"|format(score.recall*100) }}%</td><td>{{ "%.1f"|format(score.f1*100) }}%</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+<div class="disclaimer">⚠ This is an initial screening tool, not a fact-checker. A prediction does not prove a story is true or false. Verify important claims using credible sources.</div>
+<footer>Project prototype · Fake News Detection using NLP and TF-IDF</footer>
+</main>
+<script>const t=document.querySelector("textarea"),c=document.querySelector("#count");function update(){c.textContent=t.value.length+" characters"}t.addEventListener("input",update);update();</script>
+</body></html>

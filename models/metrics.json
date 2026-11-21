@@ -1,0 +1,32 @@
+{
+  "best_model": "Linear SVM",
+  "metrics": {
+    "Naive Bayes": {
+      "accuracy": 0.9519,
+      "precision": 0.9468,
+      "recall": 0.9484,
+      "f1": 0.9476
+    },
+    "Logistic Regression": {
+      "accuracy": 0.9879,
+      "precision": 0.9893,
+      "recall": 0.9841,
+      "f1": 0.9867
+    },
+    "Linear SVM": {
+      "accuracy": 0.9944,
+      "precision": 0.9961,
+      "recall": 0.9916,
+      "f1": 0.9938
+    }
+  },
+  "dataset_rows": 39103,
+  "train_rows": 31282,
+  "test_rows": 7821,
+  "class_counts": {
+    "real": 21196,
+    "fake": 17907
+  },
+  "positive_class_for_precision_recall_f1": "fake",
+  "note": "Metrics are from a random stratified holdout. They are not proof of factual truth or performance on future news."
+}
